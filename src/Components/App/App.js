@@ -13,7 +13,14 @@ class App extends React.Component{
       {name: '',artist: '',album: 'k'},
       {name: '',artist: '',album: ''},
       {name: '',artist: '',album: ''},
-    ]};
+    ],
+      playlistName: 'Smooth Jazz',
+      playlistTracks: [
+        {name: '',artist: '', album: ''},
+        {name: '',artist: '', album: ''},
+        {name: '',artist: '', album: ''},
+      ]
+    };
   }
   render() {
     return(
