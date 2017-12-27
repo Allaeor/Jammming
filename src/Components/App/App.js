@@ -10,7 +10,7 @@ class App extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      searchResults: [{}],
+      searchResults: [],
       playlistName: 'New Playlist',
       playlistTracks: []
     };
@@ -22,7 +22,7 @@ class App extends React.Component{
   }
   addTrack(track){
     let isTrackInPlaylist = false;
-    this.state.playlistTracks.map(currentTrack =>{
+    this.state.playlistTracks.forEach(currentTrack =>{
       if(currentTrack.id === track.id){isTrackInPlaylist = true;};
     });
     if(isTrackInPlaylist === false){
@@ -49,7 +49,9 @@ class App extends React.Component{
     });
   }
   search(term){
-    this.setState({searchResults: Spotify.search(term)});
+    Spotify.search(term).then(searchResults => {
+      this.setState({searchResults: searchResults});
+    });
   }
   render() {
     return(
