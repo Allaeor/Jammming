@@ -20,28 +20,50 @@ let Spotify = {
     }
   },
   search(term){
-    fetch(`https://api.spotify.com/v1/search?type=track&q=${term}`,{
+    const acsToken = Spotify.getAccessToken();
+    return fetch(`https://api.spotify.com/v1/search?type=track&q=${term}`,{
       headers: {Authorization: `Bearer ${accessToken}`}
     }).then(response =>{
-      if(response.ok){
-        return response.json();
-      }
-      throw new Error('Request failed!');
-    }, networkError => console.log(networkError.message)
+      return response.json();
+    }
   ).then(jsonResponse =>{
     if(!jsonResponse.tracks){return [];};
     return jsonResponse.tracks.items.map(track =>{
       let thisTrack = {
         id: track.id,
         name: track.name,
-        artist: track.artist[0].name,
+        artist: track.artists[0].name,
         album: track.album.name,
         uri: track.uri
       };
       return thisTrack;
     });
   });
-  }
-};
+},
+  savePlaylist(playlistName,trackURIs){
+    if(!playlistName || !trackURIs){return;};
+    const acsToken = Spotify.getAccessToken();
+    const headers = {headers: {Authorization: `Bearer ${accessToken}`}};
+    let userId = '';
+    return fetch('https://api.spotify.com/v1/me', {headers: headers}
+  ).then(response => response.json()
+  ).then(jsonResponse =>{
+    userId = jsonResponse.id;
+      return fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
+        headers: headers,
+        method: 'POST',
+        body: JSON.stringify({name: playlistName})
+      }).then(response => response.json()
+      ).then(jsonResponse => {
+        const playlistId = jsonResponse.id;
+        return fetch(`https://api.spotify.com/v1/users/${userId}/playlists/${playlistId}/tracks`, {
+          headers: headers,
+          method: 'POST',
+          body: JSON.stringify({uris: trackURIs})
+        });
+      });
+  });
+}
+}
 
 export default Spotify;
