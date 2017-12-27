@@ -22,12 +22,14 @@ class App extends React.Component{
   }
   addTrack(track){
     let isTrackInPlaylist = false;
-    this.state.playlistTracks.forEach(currentTrack =>{
+    let tracklist = this.state.playlistTracks;
+    tracklist.forEach(currentTrack =>{
       if(currentTrack.id === track.id){isTrackInPlaylist = true;};
     });
-    if(isTrackInPlaylist === false){
-      this.state.playlistTracks.push(track);
-    };
+    if (!isTrackInPlaylist){
+      tracklist.push(track);
+      this.setState({playlistTracks : tracklist});
+    }
   }
   removeTrack(track){
     let playlistUpdate = [];
@@ -35,17 +37,17 @@ class App extends React.Component{
     this.setState({playlistTracks: playlistUpdate});
   }
   updatePlaylistName(name){
-    this.state.playlistName = name;
+    this.setState({ playlistName: name });
   }
   savePlaylist(){
-    let trackURIs = [];
+    let trackUris = [];
     this.state.playlistTracks.forEach(track =>{
-      trackURIs.push(track.URI);
+      trackUris.push(track.uri);
     });
-    Spotify.savePlaylist(this.state.playlistName,trackURIs);
+    Spotify.savePlaylist(this.state.playlistName,trackUris);
     this.setState({
       playlistName: 'New Playlist',
-      searchResults: []
+      playlistTracks: []
     });
   }
   search(term){
